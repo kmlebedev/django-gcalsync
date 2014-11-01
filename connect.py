@@ -1,8 +1,7 @@
 import httplib2
 from oauth2client.file import Storage
-
+from oauth2client.client import SignedJwtAssertionCredentials
 from django.conf import settings
-
 from apiclient.discovery import build
 
 class Connection(object):
@@ -13,14 +12,16 @@ class Connection(object):
             return self.service
 
         else:
-            storage = Storage(settings.GCALSYNC_CREDENTIALS)
-
-            credentials = storage.get()
-
             http = httplib2.Http()
+            storage = Storage(settings.GCALSYNC_CREDENTIALS)
+            credentials = storage.get()
+            if credentials is None or credentials.invalid == True:
+                    credentials = SignedJwtAssertionCredentials(settings.GCALSYNC_CREDENTIALS_EMAIL, settings.GCALSYNC_CREDENTIALS_KEY, scope="https://www.googleapis.com/auth/calendar")
+                    storage.put(credentials)
+            else:
+                credentials.refresh(http)
+
             http = credentials.authorize(http)
 
-            self.service = build(serviceName='calendar', version='v3', http=http,
-                 developerKey=settings.GCALSYNC_APIKEY)
-
+            self.service =  build("calendar", "v3", http=http)
             return self.service
