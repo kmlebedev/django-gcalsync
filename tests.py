@@ -82,7 +82,7 @@ class TestTransformer(BaseTransformer):
 class SynchronizerTest(TestCase):
     def setUp(self):
         super(SynchronizerTest, self).setUp()
-
+        connection.cursor().execute("DROP TABLE gcalsync_testevent")
         connection.cursor().execute(CREATE_TABLE)
 
         self.synchronizer = Synchronizer(calendar_id='primary', 
@@ -113,7 +113,7 @@ class SynchronizerTest(TestCase):
 class PusherTest(TestCase):
     def setUp(self):
         super(PusherTest, self).setUp()
-
+        connection.cursor().execute("DROP TABLE gcalsync_testpushevent")
         connection.cursor().execute(CREATE_PUSH_TABLE)
 
         now = datetime.now()

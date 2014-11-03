@@ -19,7 +19,8 @@ class SyncedEvent(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
-    gcal_event_id = models.CharField(max_length=100, unique=True, db_index=True)
+    gcal_event_id = models.CharField(max_length=100,unique=True, db_index=True)
+    gcal_event_etag = models.CharField(max_length=100)
     gcal_event_url = models.URLField(blank=True, null=True)
     origin = models.CharField(choices=ORIGINS,default=ORIGINS.google,max_length=6)
 
@@ -27,3 +28,4 @@ class SyncedEvent(models.Model):
 
     def __unicode__(self):
         return '%s from %s' %(self.gcal_event_id, self.synced_calendar.calendar_id)
+

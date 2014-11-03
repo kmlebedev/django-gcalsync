@@ -8,6 +8,8 @@ from gcalsync.models import SyncedEvent, SyncedCalendar
 
 from django.contrib.contenttypes.models import ContentType
 from django.utils.timezone import localtime, make_aware
+from celery.utils.log import get_task_logger
+logger = get_task_logger(__name__)
 
 class Pusher(object):
     def __init__(self, model):
@@ -21,10 +23,17 @@ class Pusher(object):
 
     def set_dates(self, event_data):
         tz = get_localzone()
-        start_dt_aware = tz.localize(event_data['start']['dateTime'])
-        end_dt_aware = tz.localize(event_data['end']['dateTime'])
-        event_data['start']['dateTime'] = rfc3339.datetimetostr(start_dt_aware)
-        event_data['end']['dateTime'] = rfc3339.datetimetostr(end_dt_aware)
+        if 'dateTime' in event_data['start']:
+            start_dt_aware = tz.localize(event_data['start']['dateTime'])
+            event_data['start']['dateTime'] = rfc3339.datetimetostr(start_dt_aware)
+        elif 'date' in event_data['start']:
+            event_data['start']['date'] = event_data['start']['date'].isoformat()
+
+        if 'dateTime' in event_data['end']:
+            end_dt_aware = tz.localize(event_data['end']['dateTime'])
+            event_data['end']['dateTime'] = rfc3339.datetimetostr(end_dt_aware)
+        elif 'date' in event_data['end']:
+            event_data['end']['date'] = event_data['end']['date'].isoformat()
 
         return event_data
 
@@ -35,8 +44,8 @@ class Pusher(object):
         calendar_id = event_data.pop('calendarId')
 
         try:
-            synced_event = SyncedEvent.objects.get(content_type=content_type,
-                object_id=self.model.id)
+            synced_event = SyncedEvent.objects.get(content_type=content_type, object_id=self.model.id)
+
 
             if synced_event.origin == 'google':
                 return False
@@ -62,7 +71,8 @@ class Pusher(object):
 
             return g_event
 
-@task
+@task(ignore_result=True, default_retry_delay=10)
 def async_push_to_gcal(instance):
+    logger.info(u'Start asycn push event %s to google calendar' % instance.title )
     Pusher(instance).create_or_update()
 

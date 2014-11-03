@@ -14,10 +14,13 @@ class BaseTransformer(object):
         return rfc3339.parse_datetime(rfc_string.replace(' ',''))
 
     def validate(self, event_data):
-        if not 'dateTime' in event_data['start']:
+        if not ('start' in event_data or 'end' in event_data):
             return False
 
-        if not 'dateTime' in event_data['end']:
+        if not ('dateTime' in event_data['start'] or 'date' in event_data['start']):
+            return False
+
+        if not ('dateTime' in event_data['end'] or 'date' in event_data['end']):
             return False
 
         if not 'summary' in event_data:

@@ -1,16 +1,16 @@
 from sync import Synchronizer
-
+from celery.utils.log import get_task_logger
 from celery.task import PeriodicTask
 from celery.registry import tasks
+
 from datetime import timedelta, datetime
+logger = get_task_logger(__name__)
 
 _tasks = []
 
 def run(calender_id, transformer):
     def func(self, **kwargs):
-        synchronizer = Synchronizer(calendar_id=calender_id, 
-            transformer=transformer)
-
+        synchronizer = Synchronizer(calendar_id=calender_id, transformer=transformer)
         synchronizer.sync()
 
     return func

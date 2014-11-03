@@ -1,7 +1,7 @@
 import os
 import imp
-import importlib
 
+from django.utils.importlib import import_module
 from django.conf import settings
 
 _RACE_PROTECTION = False
@@ -29,7 +29,7 @@ def autodiscover():
     _RACE_PROTECTION = True
     try:
         return filter(None, [find_related_module(app, 'consumers')
-                                for app in settings.INSTALLED_APPS])
+            for app in settings.INSTALLED_APPS])
     finally:
         _RACE_PROTECTION = False
 
@@ -40,7 +40,7 @@ def find_related_module(app, related_name):
     module in the application."""
 
     try:
-        app_path = importlib.import_module(app).__path__
+        app_path = import_module(app).__path__
     except AttributeError:
         return
 
@@ -48,5 +48,4 @@ def find_related_module(app, related_name):
         imp.find_module(related_name, app_path)
     except ImportError:
         return
-
-    return importlib.import_module('{0}.{1}'.format(app, related_name))
+    return import_module('{0}.{1}'.format(app, related_name))

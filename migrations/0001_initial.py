@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -22,6 +22,7 @@ class Migration(SchemaMigration):
             ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
             ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
             ('gcal_event_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100, db_index=True)),
+            ('gcal_event_etag', self.gf('django.db.models.fields.CharField')(max_length=100)),
             ('gcal_event_url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
             ('origin', self.gf('django.db.models.fields.CharField')(default='google', max_length=6)),
             ('synced_calendar', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gcalsync.SyncedCalendar'])),
@@ -54,6 +55,7 @@ class Migration(SchemaMigration):
         u'gcalsync.syncedevent': {
             'Meta': {'object_name': 'SyncedEvent'},
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            'gcal_event_etag': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'gcal_event_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
             'gcal_event_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
