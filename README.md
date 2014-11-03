@@ -19,8 +19,9 @@ Then...
 
 Add `django-gcalsync` to your settings.py. 
 
-Add a `GCALSYNC_CALENDAR` property to your settings.py - this should be Google calendar name
+Add a `GCALSYNC_CALENDAR` property to your settings.py - this should be Google calendar name created under the working Google account, and shared for your Service account email User.
 example: GCALSYNC_CALENDAR = 'primary'
+
 
 Add a `GCALSYNC_CREDENTIALS` property to your settings.py - this should be the full path to the credentials file you created in Authentication above.
 example: GCALSYNC_CREDENTIALS = 'DIR/calendar.dat'
@@ -44,7 +45,9 @@ Run celery
 Usage
 -----
 
-Create a consumers.py module in the app containing the model you'd like to sync. In that module you'll create a class responsible for transforming Google Calendar event data so it's usable by your model. Your class must have a `transform` method that accepts an event_data dictionary (the data from Google).
+Create a tasks.py module in the mezzanine_events. In that module you'll create a class responsible for transforming Google Calendar event data so it's usable by your model. Your class must have a `transform` method that accepts an event_data dictionary (the data from Google).
+
+
 
 For Example:
 
