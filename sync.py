@@ -1,9 +1,7 @@
 import datetime
 import rfc3339
 
-from django.conf import settings
-from mezzanine.generic.models import AssignedKeyword, Keyword
-
+from mezzanine.generic.models import AssignedKeyword
 from gcalsync.models import SyncedCalendar, SyncedEvent
 from gcalsync.push import async_push_to_gcal
 from gcalsync.connect import Connection
