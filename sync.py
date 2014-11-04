@@ -8,14 +8,18 @@ from gcalsync.models import SyncedCalendar, SyncedEvent
 from gcalsync.push import async_push_to_gcal
 from gcalsync.connect import Connection
 from celery.utils.log import get_task_logger
-
-logger = get_task_logger(__name__)
 from pprint import pprint
 
+logger = get_task_logger(__name__)
+
+
 class Retriever(object):
+    def get_gcal_summary(self, calendar_id):
+        return Connection().get_service().calendars().get(calendarId=calendar_id).execute()['summary']
+
     def get_event_list(self, connection=None, calendar_id=None, 
         processor=None, last_retrieved=None, post_retrieval=None):
-        
+
         page_token = None
         if last_retrieved:
             updated_min = rfc3339.datetimetostr(last_retrieved)
@@ -47,13 +51,17 @@ class Synchronizer(object):
         self.synced_calendar = self.setup_synced_calendar()
 
     def setup_synced_calendar(self):
-        synced_calendar, created = SyncedCalendar.objects.get_or_create(
-            calendar_id=self.calendar_id)
+        try:
+            synced_calendar = SyncedCalendar.objects.get(calendar_id=self.calendar_id)
+        except SyncedCalendar.DoesNotExist:
+            synced_calendar = SyncedCalendar(calendar_id=self.calendar_id)
+            synced_calendar.content_object = self.transformer.container(Retriever().get_gcal_summary(self.calendar_id))
+            synced_calendar.save()
 
         return synced_calendar
 
     def sync(self):
-        Retriever().get_event_list(connection=Connection(), 
+        Retriever().get_event_list(connection=Connection(),
             calendar_id=self.calendar_id, 
             processor=self.process,
             post_retrieval=self.post_retrieval,
@@ -115,7 +123,7 @@ class Synchronizer(object):
             synced_event.synced_calendar = self.synced_calendar
             synced_event.save()
 
-        return synced_event           
+        return synced_event
 
     def process(self, event_data):
         model_data = self.get_model_data(event_data)

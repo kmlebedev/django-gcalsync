@@ -13,6 +13,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('calendar_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100, db_index=True)),
             ('last_synced', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
         ))
         db.send_create_signal(u'gcalsync', ['SyncedCalendar'])
 
@@ -23,7 +24,7 @@ class Migration(SchemaMigration):
             ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
             ('gcal_event_id', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100, db_index=True)),
             ('gcal_event_etag', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('gcal_event_url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
+            ('gcal_event_url', self.gf('django.db.models.fields.URLField')(max_length=512, null=True, blank=True)),
             ('origin', self.gf('django.db.models.fields.CharField')(default='google', max_length=6)),
             ('synced_calendar', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['gcalsync.SyncedCalendar'])),
         ))
@@ -50,14 +51,15 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'SyncedCalendar'},
             'calendar_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_synced': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
+            'last_synced': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
         },
         u'gcalsync.syncedevent': {
             'Meta': {'object_name': 'SyncedEvent'},
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
             'gcal_event_etag': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'gcal_event_id': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'}),
-            'gcal_event_url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'gcal_event_url': ('django.db.models.fields.URLField', [], {'max_length': '512', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'origin': ('django.db.models.fields.CharField', [], {'default': "'google'", 'max_length': '6'}),
