@@ -64,6 +64,7 @@ class Pusher(object):
             synced_event = SyncedEvent.objects.create(
                     content_object=self.model,
                     gcal_event_id=g_event['id'],
+                    gcal_event_etag=g_event['etag'],
                     gcal_event_url=g_event['htmlLink'],
                     synced_calendar=synced_calendar,
                     origin='app'
