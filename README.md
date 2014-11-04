@@ -2,7 +2,7 @@
 Django GcalSync for mezzanine_events
 =============
 
-Sync application models with Google Calendar, so events created or edited in the Google Calendar interface are automatically created/updated in your application. Helpful for situations were your application is the canonical record of event data created from various clients, including GC.
+Sync application models with Google Calendar, so events created or edited in the Google Calendar web interface are automatically created/updated in your application. Helpful for situations were your application is the canonical record of event data created from various clients, including GC. To manage the categories(keywords) of events I used [eM Client](http://www.emclient.com/)
 
 Authentication
 ----- 
@@ -20,17 +20,20 @@ Then...
 Add `django-gcalsync` to your settings.py. 
 
 Add a `GCALSYNC_CALENDAR` property to your settings.py - this should be Google calendar name created under the working Google account, and shared for your Service account email User.
-example: GCALSYNC_CALENDAR = 'primary'
 
+ GCALSYNC_CALENDAR = 'primary'
 
 Add a `GCALSYNC_CREDENTIALS` property to your settings.py - this should be the full path to the credentials file you created in Authentication above.
-example: GCALSYNC_CREDENTIALS = 'DIR/calendar.dat'
+
+ GCALSYNC_CREDENTIALS = 'DIR/calendar.dat'
 
 Add a `GCALSYNC_CREDENTIALS_EMAIL` property to your settings.py - this is the you `EMAIL ADDRESS` for Service Account in the Google App Console in Authentication
-example: GCALSYNC_CREDENTIALS_EMAIL = 'XXXXXXX-XXXXX@developer.gserviceaccount.com'
+
+ GCALSYNC_CREDENTIALS_EMAIL = 'XXXXXXX-XXXXX@developer.gserviceaccount.com'
 
 Add a `GCALSYNC_CREDENTIALS_KEY` property to your settings.py - this is the PK12 key generated in the Google App Console in Authentication, and converted to pem format
-example: GCALSYNC_CREDENTIALS_KEY = 'DIR/your-project-XXXXXXX.pem'
+
+ GCALSYNC_CREDENTIALS_KEY = 'DIR/your-project-XXXXXXX.pem'
 
     openssl pkcs12 -in your-project-XXXXXXX.p12 -nodes -nocerts > your-project-XXXXXXX.pem (password:notasecret)
 
